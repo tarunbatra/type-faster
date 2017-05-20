@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>
+      Type Faster - tarunbatra
+    </title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">TypeFaster</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#" id="logout-link"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="col-xs-12 col-md-4 games-list">
+      <div class="container-fluid">
+      	<div class="list-group">
+      		<div class="list-group-item active panel-title">
+      			Games
+            <button id="new-game-btn" class="btn btn-default pull-right" data-toggle="modal" data-target="#newGameModal">
+              New Game <span class="glyphicon glyphicon-plus-sign"></span>
+            </buton>
+            </div>
+      		</div>
+      		<div id="gameList">
+      		</div>
+      	</div>
+    </div>
+    <!-- New Game Modal -->
+    <div id="newGameModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">New Game</h4>
+          </div>
+          <form role="form" id="new-game-form">
+            <fieldset>
+              <div class="modal-body">
+                <div class="form-group">
+                  <input class="form-control" placeholder="Name" name="name" type="text" autofocus required>
+                </div>
+                <div class="form-group">
+                  <input class="form-control" placeholder="No. of Players" name="players" type="number" min=2 max=4 required>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn btn-success">Create</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+ </body>
+</html>
