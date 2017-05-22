@@ -10,16 +10,24 @@ $(document).ready(function () {
   }
 
   connectSocket(username, function (err, socket) {
-    if (err) {
-      return alert('Something went wrong. Try again.');
-    }
+    if (err) return console.log(err);
     window.socket = socket;
 
     window.socket.on('NEW_GAME', function(data) {
-      $('#gameList').append('<a href="#" class="list-group-item">' + data.name + '</a>');
+      $('#gameList').append(generateGameEntry(data.name, data.players, 1));
     });
     window.socket.on('NEW_PLAYER', function(data) {
+      console.log('NEW_PLAYER', data);
+    });
+
+    window.socket.on('ALL_GAMES', function(data) {
+      console.log('ALL_GAMES');
+      var gameList = '';
       console.log(data);
+      for(var i in data) {
+        gameList += generateGameEntry(i, data[i].players, data[i].room.length);
+      }
+      $('#gameList').html(gameList);
     });
   });
 
@@ -55,3 +63,19 @@ function connectSocket(username, cb) {
     cb(true);
   });
 };
+
+function generateGameEntry(name, playersRequired, currentPlayers) {
+  return '<a href="#" class="list-group-item" onclick="gameLinkHandler(\''
+  + name
+  + '\')">'
+  + name
+  +'<span class="badge" data-toggle="tooltip" title="Players left to join">'
+  + (playersRequired - currentPlayers)
+  + '</span></a>';
+}
+
+function gameLinkHandler(gameName) {
+  window.socket.emit('JOIN_GAME', {
+    name: gameName
+  });
+}
