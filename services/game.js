@@ -8,7 +8,9 @@
    'NEW_GAME',
    'NEW_PLAYER',
    'ALL_GAMES',
-   'JOIN_GAME'
+   'JOIN_GAME',
+   'GAME_JOINED',
+   'START_GAME'
  ];
 
  const Events = eventList.reduce((base, event) => {
@@ -38,21 +40,20 @@ const Game = {
     });
   },
   join: function joinGame(io, socket, params) {
-    console.log(params);
     const game = Rooms[params.name];
     // If game doesnt exist or is already full
     if (!game || game.players <= game.room.length) {
       return;
     }
     socket.join(params.name, err => {
-      console.log(err);
       if (err) return;
-      socket.broadcast.to(params.name).emit(Events.NEW_PLAYER, params);
+      console.log(socket.username);
+      socket.emit(Events.GAME_JOINED, params);
 
       io.emit(Events.ALL_GAMES, Rooms);
       // If all players are ready
-      if (game.player === game.room.length) {
-        socket.broadcast.to(params.name).emit(Events.START_GAME, game);
+      if (game.players === game.room.length) {
+        io.sockets.in(params.name).emit(Events.START_GAME, game);
       }
     });
   },

@@ -19,6 +19,14 @@ $(document).ready(function () {
     window.socket.on('NEW_PLAYER', function(data) {
       console.log('NEW_PLAYER', data);
     });
+    window.socket.on('GAME_JOINED', function(data) {
+      console.log('GAME_JOINED', data);
+      $('#waitingModal').modal('show');
+    });
+    window.socket.on('START_GAME', function(data) {
+      console.log('START_GAME', data);
+      $('#waitingModal').modal('hide');
+    });
 
     window.socket.on('ALL_GAMES', function(data) {
       console.log('ALL_GAMES');
@@ -46,7 +54,8 @@ $(document).ready(function () {
     };
     window.socket.emit('NEW_GAME', game);
     e.target.reset();
-    $('#newGameModal').modal('toggle');
+    $('#newGameModal').modal('hide');
+    $('#waitingModal').modal('show');
   });
 });
 
