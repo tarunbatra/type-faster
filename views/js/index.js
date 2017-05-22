@@ -21,7 +21,10 @@ $(document).ready(function () {
     });
     window.socket.on('GAME_JOINED', function(data) {
       console.log('GAME_JOINED', data);
-      $('#waitingModal').modal('show');
+      $('#waitingModal').modal({
+        backdrop: 'static',
+        keyboard: false
+      });
     });
     window.socket.on('START_GAME', function(data) {
       console.log('START_GAME', data);
@@ -55,7 +58,10 @@ $(document).ready(function () {
     window.socket.emit('NEW_GAME', game);
     e.target.reset();
     $('#newGameModal').modal('hide');
-    $('#waitingModal').modal('show');
+    $('#waitingModal').modal({
+      backdrop: 'static',
+      keyboard: false
+    });
   });
 });
 
