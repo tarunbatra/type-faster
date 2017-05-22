@@ -2,6 +2,7 @@
  * @file Game service
  */
 
+const randomText = require('lorem-ipsum');
 
  // List of event, can emit to client
  const eventList = [
@@ -53,7 +54,10 @@ const Game = {
       io.emit(Events.ALL_GAMES, Rooms);
       // If all players are ready
       if (game.players === game.room.length) {
-        io.sockets.in(params.name).emit(Events.START_GAME, game);
+        io.sockets.in(params.name).emit(Events.START_GAME, {
+          name: game.name,
+          text: randomText()
+        });
       }
     });
   },

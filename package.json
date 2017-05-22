@@ -11,6 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.15.3",
+    "lorem-ipsum": "^1.0.4",
     "socket.io": "^2.0.1"
   }
 }
