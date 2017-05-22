@@ -78,8 +78,10 @@ function generateGameEntry(name, playersRequired, currentPlayers) {
   + name
   + '\')">'
   + name
-  +'<span class="badge" data-toggle="tooltip" title="Players left to join">'
-  + (playersRequired - currentPlayers)
+  +'<span class="badge" data-toggle="tooltip" title="Players currently joined">'
+  + currentPlayers
+  +' / '
+  + playersRequired
   + '</span></a>';
 }
 
