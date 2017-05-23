@@ -1,56 +1,61 @@
 /**
  * @file Script for index.html
  */
-$(document).ready(function () {
+$(document).ready(() => {
 
   // Check if user is not logged in
-  var username = localStorage.getItem('username');
+  const username = localStorage.getItem('username');
+
   if (!username) {
     location.replace('/login.html');
   }
   // Connect to servee
-  connectSocket(username, function (err, socket) {
-    if (err) return console.log(err);
+  connectSocket(username, (err, socket) => {
+    if (err) {
+ return console.log(err);
+}
     window.socket = socket;
     // Set listeners for all the events
-    window.socket.on('NEW_GAME', function(data) {
+    window.socket.on('NEW_GAME', (data) => {
       $('#gameList').append(generateGameEntry(data.name, data.players, 1));
     });
 
-    window.socket.on('GAME_JOINED', function(data) {
+    window.socket.on('GAME_JOINED', (data) => {
       console.log('GAME_JOINED', data);
       $('#waitingModal').modal({
-        backdrop: 'static',
-        keyboard: false
+        'backdrop': 'static',
+        'keyboard': false
       });
     });
 
-    window.socket.on('RESULTS', function(data) {
+    window.socket.on('RESULTS', (data) => {
       console.log('RESULTS', data);
       // Clear after the game
       $('#game-response').val('');
       $('#gameModal').modal('hide');
       // Calculate rank
-      var rank = data.rank.indexOf(localStorage.getItem('username'));
-      alert('Your rank: ' + (rank + 1));
+      const rank = data.rank.indexOf(localStorage.getItem('username'));
+
+      alert(`Your rank: ${rank + 1}`);
     });
 
-    window.socket.on('START_GAME', function(data) {
+    window.socket.on('START_GAME', (data) => {
       console.log('START_GAME', data);
       window.game = data;
       $('#waitingModal').modal('hide');
       $('#game-text').attr('data-text', data.text);
       $('#gameModal').modal({
-        backdrop: 'static',
-        keyboard: false
+        'backdrop': 'static',
+        'keyboard': false
       });
     });
 
-    window.socket.on('ALL_GAMES', function(data) {
+    window.socket.on('ALL_GAMES', (data) => {
       console.log('ALL_GAMES', data);
       // Generate list of games to display
-      var gameList = '';
-      for(var i in data) {
+      let gameList = '';
+
+      for (const i in data) { // eslint-disable-line id-length
         gameList += generateGameEntry(i, data[i].players, data[i].room.length);
       }
       $('#gameList').html(gameList);
@@ -58,42 +63,47 @@ $(document).ready(function () {
   });
 
   // Handle logout
-  $('#logout-link').click(function (e) {
-    e.preventDefault();
+  $('#logout-link').click((event) => {
+    event.preventDefault();
     localStorage.removeItem('username');
     location.replace('/login.html');
   });
 
   // Handle New Game form submission
-  $('#new-game-form').submit(function (e) {
-    e.preventDefault();
-    var game = {
-      name: e.target.name.value,
-      players: Number(e.target.players.value)
+  $('#new-game-form').submit((event) => {
+    event.preventDefault();
+    const game = {
+      'name': event.target.name.value,
+      'players': Number(event.target.players.value)
     };
+
     window.socket.emit('NEW_GAME', game);
-    e.target.reset();
+    event.target.reset();
     $('#newGameModal').modal('hide');
     $('#waitingModal').modal({
-      backdrop: 'static',
-      keyboard: false
+      'backdrop': 'static',
+      'keyboard': false
     });
   });
 
   // Handle game submission
-  $('#game-form').submit(function (e) {
-    e.preventDefault();
-    var gameText = window.game.text;
-    var userResponse = e.target.response.value;
+  $('#game-form').submit((event) => {
+    event.preventDefault();
+    const gameText = window.game.text;
+    const userResponse = event.target.response.value;
+
     if (gameText !== userResponse) {
       $('#game-alert').html('<h3>Try Again</h3>');
-      return;
+
+return;
     }
     window.socket.emit('DONE', {
-      name: window.game.name,
-      response: userResponse
+      'name': window.game.name,
+      'response': userResponse
     });
-    $('#game-alert').html('<h3>Waiting for other players</h3><img src="/assets/loading.gif">');
+    $('#game-alert').html(
+      '<h3>Waiting for other players</h3><img src="/assets/loading.gif">'
+    );
     $('#game-btn').prop('disabled', true);
   });
 });
@@ -104,18 +114,16 @@ $(document).ready(function () {
  * @param: {string} username - Username of user
  * @param: {function} cb - Callback
  */
-function connectSocket(username, cb) {
-  var socket = io.connect('', {
-    query: 'username=' + username
-  });
+function connectSocket (username, cb) {
+  const socket = io.connect('', { 'query': `username=${username}` });
 
-  socket.on('connect', function () {
+  socket.on('connect', () => {
     cb(null, socket);
   });
-  socket.on('disconnect', function () {
+  socket.on('disconnect', () => {
     cb(true);
   });
-};
+}
 
 /**
  * Generates HTML for listing game entry
@@ -124,16 +132,16 @@ function connectSocket(username, cb) {
  * @param: {number} playersRequired - No. of players required in game
  * @param: {number} currentPlayers - No. of players who joined the game
  */
-function generateGameEntry(name, playersRequired, currentPlayers) {
-  return '<a href="#" class="list-group-item" onclick="gameLinkHandler(\''
-  + name
-  + '\')">'
-  + name
-  +'<span class="badge" data-toggle="tooltip" title="Players currently joined">'
-  + currentPlayers
-  +' / '
-  + playersRequired
-  + '</span></a>';
+function generateGameEntry (name, playersRequired, currentPlayers) {
+  return `<a href="#" class="list-group-item" onclick="gameLinkHandler('${
+   name
+   }')">${
+   name
+  }<span class="badge" data-toggle="tooltip" title="Players currently joined">${
+   currentPlayers
+  } / ${
+   playersRequired
+   }</span></a>`;
 }
 
 /**
@@ -141,8 +149,6 @@ function generateGameEntry(name, playersRequired, currentPlayers) {
  *
  * @param: {string} gameName - Name of game
  */
-function gameLinkHandler(gameName) {
-  window.socket.emit('JOIN_GAME', {
-    name: gameName
-  });
+function gameLinkHandler (gameName) {    // eslint-disable-line no-unused-vars
+  window.socket.emit('JOIN_GAME', { 'name': gameName });
 }

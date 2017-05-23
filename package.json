@@ -4,8 +4,10 @@
   "description": "Game to type faster",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint ./",
+    "lint:fix": "eslint ./ --fix",
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run lint"
   },
   "author": "Tarun Batra <tarun.batra00@gmail.com>",
   "license": "MIT",
@@ -13,5 +15,8 @@
     "express": "^4.15.3",
     "lorem-ipsum": "^1.0.4",
     "socket.io": "^2.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^3.19.0"
   }
 }

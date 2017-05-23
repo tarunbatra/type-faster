@@ -2,19 +2,20 @@
  * @file Script for login.html
  */
 
-$(document).ready(function () {
+$(document).ready(() => {
 
   // Check if user is already logged in
-  var username = localStorage.getItem('username');
+  const username = localStorage.getItem('username');
+
   if (username) {
     location.replace('/index.html');
   }
 
   // Handle login form submission
-  $('#login-form').submit(function (e) {
-    e.preventDefault();
-    var username = e.target.username.value;
-    localStorage.setItem('username', username);
+  $('#login-form').submit((event) => {
+    event.preventDefault();
+
+    localStorage.setItem('username', event.target.username.value);
     location.replace('/');
   });
 });

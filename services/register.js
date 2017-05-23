@@ -2,7 +2,7 @@
  * @file Register service
  */
 
-module.exports = function register(socket, next) {
+module.exports = function register (socket, next) {
   // Assign teference to username
   socket.username = socket.handshake.query.username;
   // NOTE: Authenticate here if required
