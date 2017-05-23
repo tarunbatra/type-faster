@@ -26,9 +26,15 @@ $(document).ready(function () {
         keyboard: false
       });
     });
+
     window.socket.on('START_GAME', function(data) {
       console.log('START_GAME', data);
       $('#waitingModal').modal('hide');
+      $('#game-text').text(data.text);
+      $('#gameModal').modal({
+        backdrop: 'static',
+        keyboard: false
+      });
     });
 
     window.socket.on('ALL_GAMES', function(data) {

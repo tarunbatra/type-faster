@@ -5,6 +5,7 @@
       Type Faster - tarunbatra
     </title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/index.css">
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
@@ -22,19 +23,24 @@
       </div>
     </nav>
 
-    <div class="col-xs-12 col-md-3 games-list">
+    <div class="col-xs-12 col-sm-4 col-md-4 games-list">
       <div class="container-fluid">
-      	<div class="list-group">
-      		<div class="list-group-item active panel-title">
-      			Games
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            Games
             <button id="new-game-btn" class="btn btn-default pull-right" data-toggle="modal" data-target="#newGameModal">
               New Game <span class="glyphicon glyphicon-plus-sign"></span>
             </buton>
-            </div>
-      		</div>
-      		<div id="gameList">
-      		</div>
-      	</div>
+          </div>
+          <div class="panel-body">
+            <div class="list-group" id="gameList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-8 col-md-8" id="game-area">
+      <div class ="container-fluid">
+      </div>
     </div>
     <!-- New Game Modal -->
     <div id="newGameModal" class="modal fade" role="dialog">
@@ -73,6 +79,31 @@
             <div class="modal-body">
               <img src="/assets/loading.gif" alt="loading">
             </div>
+        </div>
+      </div>
+    </div>
+    <!-- Game Modal -->
+    <div id="gameModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content text-center">
+          <form role="form" id="game-form">
+            <fieldset>
+              <div class="modal-header">
+                <h4 class="modal-title">Can you type this faster?</h4>
+              </div>
+                <div class="modal-body">
+                  <div class="container-fluid">
+                    <p id="game-text"></p>
+                  </div>
+                  <div class="container-fluid">
+                    <input type="text" class="form-control" id="game-response" autofocus></input>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn btn-success">Done!</button>
+                </div>
+              </fieldset>
+            </form>
         </div>
       </div>
     </div>
