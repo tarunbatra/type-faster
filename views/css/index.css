@@ -4,3 +4,7 @@
   color: white;
   border-radius: 8px;
 }
+
+[data-text]::after {
+  content: attr(data-text);
+}
