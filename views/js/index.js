@@ -16,9 +16,11 @@ $(document).ready(function () {
     window.socket.on('NEW_GAME', function(data) {
       $('#gameList').append(generateGameEntry(data.name, data.players, 1));
     });
+
     window.socket.on('NEW_PLAYER', function(data) {
       console.log('NEW_PLAYER', data);
     });
+
     window.socket.on('GAME_JOINED', function(data) {
       console.log('GAME_JOINED', data);
       $('#waitingModal').modal({
@@ -27,10 +29,20 @@ $(document).ready(function () {
       });
     });
 
+    window.socket.on('RESULTS', function(data) {
+      console.log('RESULTS', data);
+      // Clear after the game
+      $('#game-response').val('');
+      $('#gameModal').modal('hide');
+      var rank = data.rank.indexOf(localStorage.getItem('username'));
+      alert('Your rank: ' + (rank + 1));
+    });
+
     window.socket.on('START_GAME', function(data) {
       console.log('START_GAME', data);
+      window.game = data;
       $('#waitingModal').modal('hide');
-      $('#game-text').text(data.text);
+      $('#game-text').attr('data-text', data.text);
       $('#gameModal').modal({
         backdrop: 'static',
         keyboard: false
@@ -68,6 +80,23 @@ $(document).ready(function () {
       backdrop: 'static',
       keyboard: false
     });
+  });
+
+  // Handle New Game form submission
+  $('#game-form').submit(function (e) {
+    e.preventDefault();
+    var gameText = window.game.text;
+    var userResponse = e.target.response.value;
+    if (gameText !== userResponse) {
+      $('#game-alert').html('<h3>Try Again</h3>');
+      return;
+    }
+    window.socket.emit('DONE', {
+      name: window.game.name,
+      response: userResponse
+    });
+    $('#game-alert').html('<h3>Waiting for other players</h3><img src="/assets/loading.gif">');
+    $('#game-btn').prop('disabled', true);
   });
 });
 

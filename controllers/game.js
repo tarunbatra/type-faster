@@ -11,7 +11,9 @@ const randomText = require('lorem-ipsum');
    'ALL_GAMES',
    'JOIN_GAME',
    'GAME_JOINED',
-   'START_GAME'
+   'START_GAME',
+   'DONE',
+   'RESULTS'
  ];
 
  const Events = eventList.reduce((base, event) => {
@@ -36,7 +38,8 @@ const Game = {
       // Record the new game
       Rooms[params.name] = {
         players: params.players,
-        room: io.sockets.adapter.rooms[params.name]
+        room: io.sockets.adapter.rooms[params.name],
+        rank: []
       };
     });
   },
@@ -55,11 +58,30 @@ const Game = {
       // If all players are ready
       if (game.players === game.room.length) {
         io.sockets.in(params.name).emit(Events.START_GAME, {
-          name: game.name,
+          name: params.name,
           text: randomText()
         });
       }
     });
+  },
+  done: function done(io, socket, params) {
+    console.log(socket);
+    console.log('done', params);
+    const game = Rooms[params.name];
+    game.rank.push(socket.username);
+
+    // Everyone is finished
+    if (game.rank.length === game.players) {
+      // Send results to all the players
+      io.sockets.in(params.name).emit(Events.RESULTS, {
+        name: params.name,
+        rank: game.rank
+      });
+      // De-list the game and re-publish the lsit
+      delete Rooms[params.name];
+      Game.sendAllGames(io, socket);
+    }
+
   },
   sendAllGames: function sendAllGames(io, socket) {
     socket.emit(Events.ALL_GAMES, Rooms);
