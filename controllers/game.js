@@ -79,7 +79,7 @@ const Game = {
       });
       // De-list the game and re-publish the lsit
       delete Rooms[params.name];
-      Game.sendAllGames(io, socket);
+      io.sockets.in(params.name).emit(Events.ALL_GAMES, Rooms);
     }
 
   },
