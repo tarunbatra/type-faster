@@ -8,17 +8,13 @@ $(document).ready(function () {
   if (!username) {
     location.replace('/login.html');
   }
-
+  // Connect to servee
   connectSocket(username, function (err, socket) {
     if (err) return console.log(err);
     window.socket = socket;
-
+    // Set listeners for all the events
     window.socket.on('NEW_GAME', function(data) {
       $('#gameList').append(generateGameEntry(data.name, data.players, 1));
-    });
-
-    window.socket.on('NEW_PLAYER', function(data) {
-      console.log('NEW_PLAYER', data);
     });
 
     window.socket.on('GAME_JOINED', function(data) {
@@ -34,6 +30,7 @@ $(document).ready(function () {
       // Clear after the game
       $('#game-response').val('');
       $('#gameModal').modal('hide');
+      // Calculate rank
       var rank = data.rank.indexOf(localStorage.getItem('username'));
       alert('Your rank: ' + (rank + 1));
     });
@@ -50,9 +47,9 @@ $(document).ready(function () {
     });
 
     window.socket.on('ALL_GAMES', function(data) {
-      console.log('ALL_GAMES');
+      console.log('ALL_GAMES', data);
+      // Generate list of games to display
       var gameList = '';
-      console.log(data);
       for(var i in data) {
         gameList += generateGameEntry(i, data[i].players, data[i].room.length);
       }
@@ -66,6 +63,7 @@ $(document).ready(function () {
     localStorage.removeItem('username');
     location.replace('/login.html');
   });
+
   // Handle New Game form submission
   $('#new-game-form').submit(function (e) {
     e.preventDefault();
@@ -82,7 +80,7 @@ $(document).ready(function () {
     });
   });
 
-  // Handle New Game form submission
+  // Handle game submission
   $('#game-form').submit(function (e) {
     e.preventDefault();
     var gameText = window.game.text;
@@ -100,6 +98,12 @@ $(document).ready(function () {
   });
 });
 
+/**
+ * Connects to server via sockets
+ *
+ * @param: {string} username - Username of user
+ * @param: {function} cb - Callback
+ */
 function connectSocket(username, cb) {
   var socket = io.connect('', {
     query: 'username=' + username
@@ -109,11 +113,17 @@ function connectSocket(username, cb) {
     cb(null, socket);
   });
   socket.on('disconnect', function () {
-    console.log('disconnected');
     cb(true);
   });
 };
 
+/**
+ * Generates HTML for listing game entry
+ *
+ * @param: {string} name - Name of game
+ * @param: {number} playersRequired - No. of players required in game
+ * @param: {number} currentPlayers - No. of players who joined the game
+ */
 function generateGameEntry(name, playersRequired, currentPlayers) {
   return '<a href="#" class="list-group-item" onclick="gameLinkHandler(\''
   + name
@@ -126,6 +136,11 @@ function generateGameEntry(name, playersRequired, currentPlayers) {
   + '</span></a>';
 }
 
+/**
+ * Handler for joining game link
+ *
+ * @param: {string} gameName - Name of game
+ */
 function gameLinkHandler(gameName) {
   window.socket.emit('JOIN_GAME', {
     name: gameName

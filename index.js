@@ -34,6 +34,8 @@ io.on('connection', socket => {
   socket.on(Events.NEW_GAME, Game.new.bind(null, io, socket));
   socket.on(Events.JOIN_GAME, Game.join.bind(null, io, socket));
   socket.on(Events.DONE, Game.done.bind(null, io, socket));
+
   console.log('User connected: ', socket.handshake.query.username);
+  // Send initial list of games to new users
   Game.sendAllGames(io, socket);
 });

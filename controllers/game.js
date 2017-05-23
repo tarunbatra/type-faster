@@ -7,7 +7,6 @@ const randomText = require('lorem-ipsum');
  // List of event, can emit to client
  const eventList = [
    'NEW_GAME',
-   'NEW_PLAYER',
    'ALL_GAMES',
    'JOIN_GAME',
    'GAME_JOINED',
@@ -21,20 +20,27 @@ const randomText = require('lorem-ipsum');
    return base;
  }, {});
 
- // Map of all the live games in the app
- // NOTE: Move this to a data store to make
- //       the app state-less and scalable
- const Rooms = {};
+// Map of all the live games in the app
+// NOTE: Move this to a data store to make
+//       the app state-less and scalable
+const Rooms = {};
 
 const Game = {
+  /**
+   * Create a new game
+   *
+   * @param: {object} io - IO Object
+   * @param: {object} socket - Socket of user
+   * @param: {object} params - Params from client
+   * @param: {string} params.name - Name of game
+   * @param: {string} params.players - No. of players required
+   */
   new: function newGame(io, socket, params) {
     socket.join(params.name, err => {
       if (err) return;
       console.log(`New game created: ${params.name}`);
       // Inform all clients about the new game
       io.emit(Events.NEW_GAME, params);
-      // Let the player join the game
-      Game.join(io, socket, params);
       // Record the new game
       Rooms[params.name] = {
         players: params.players,
@@ -43,6 +49,15 @@ const Game = {
       };
     });
   },
+
+  /**
+   * Adds a user in a game
+   *
+   * @param: {object} io - IO Object
+   * @param: {object} socket - Socket of user
+   * @param: {object} params - Params from client
+   * @param: {string} params.name - Name of game
+   */
   join: function joinGame(io, socket, params) {
     const game = Rooms[params.name];
     // If game doesnt exist or is already full
@@ -51,7 +66,7 @@ const Game = {
     }
     socket.join(params.name, err => {
       if (err) return;
-      console.log(socket.username);
+      console.log(`${socket.username} joined ${params.name} game`);
       socket.emit(Events.GAME_JOINED, params);
 
       io.emit(Events.ALL_GAMES, Rooms);
@@ -64,10 +79,22 @@ const Game = {
       }
     });
   },
+
+  /**
+   * Marks that a user finished game
+   *
+   * @param: {object} io - IO Object
+   * @param: {object} socket - Socket of user
+   * @param: {object} params - Params from client
+   * @param: {string} params.name - Name of game
+   * @param: {string} params.solution - Solution submitted by user
+   */
   done: function done(io, socket, params) {
-    console.log(socket);
-    console.log('done', params);
     const game = Rooms[params.name];
+    // Lets not trust client to check the validity of solution
+    if (params.solution !== game.text) return;
+
+    console.log(`${socket.username} finished ${params.name} game`);
     game.rank.push(socket.username);
 
     // Everyone is finished
@@ -83,6 +110,12 @@ const Game = {
     }
 
   },
+  /**
+   * Sends latest list of all games to a user
+   *
+   * @param: {object} io - IO Object
+   * @param: {object} socket - Socket of user
+   */
   sendAllGames: function sendAllGames(io, socket) {
     socket.emit(Events.ALL_GAMES, Rooms);
   }
