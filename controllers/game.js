@@ -81,7 +81,12 @@ const Game = {
       if (game.players === game.room.length) {
         io.sockets.in(params.name).emit(Events.START_GAME, {
           'name': params.name,
-          'text': randomText()
+          'text': randomText({
+            count: 1,
+            units: 'sentences',
+            sentenceLowerBound: process.env.MIN_WORDS || 4,
+            sentenceUpperBound: process.env.MAX_WORDS || 8
+          })
         });
       }
     });
