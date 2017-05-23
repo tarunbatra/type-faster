@@ -5,7 +5,7 @@
 const express = require('express');
 const socketIO = require('socket.io');
 const registerService = require('./services/register');
-const { Game, Events } = require('./services/game');
+const { Game, Events } = require('./controllers/game');
 const PORT = process.env.PORT || 3000;
 
 // Set up web server with express and socket.io

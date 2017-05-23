@@ -1,5 +1,5 @@
 /**
- * @file Game service
+ * @file Game Controller
  */
 
 const randomText = require('lorem-ipsum');
